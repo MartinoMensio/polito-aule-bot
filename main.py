@@ -1,6 +1,5 @@
-import json
 import os
-import sys
+import re
 import time
 import telepot
 from telepot.loop import MessageLoop
@@ -55,7 +54,10 @@ def handle(msg):
                 for area, rooms in all_rooms.items():
                     # key is an area, value a list of rooms
                     if location:
-                        if not location['value'].lower() in area.lower():
+                        delimiters = [' ', '_', ',', ', ', '-', '\n']
+                        regex_pattern = '|'.join(map(re.escape, delimiters))
+                        search_filters = re.split(regex_pattern, location['value'])
+                        if not all(filter in area.lower() for filter in search_filters):
                             continue
 
                     res = ''
