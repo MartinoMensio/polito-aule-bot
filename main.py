@@ -72,7 +72,7 @@ bot = telepot.Bot(os.environ['TELEGRAM_TOKEN'])
 ent_extractor = wit_client.Extractor(os.environ['WIT_TOKEN'])
 data_provider = polito_client.Client(os.environ['POLITO_TOKEN'])
 
-MessageLoop(bot, handle).run_as_thread()
+bot.message_loop(handle)
 print('Listening ...')
 
 # Keep the program running.
