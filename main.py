@@ -32,6 +32,9 @@ def handle(msg):
                 location = entities.get('location')
                 loading_string = 'Sto cercando aule '
                 if datetime:
+                    if not datetime.get('value'):
+                        # if this is an interval
+                        datetime = datetime['from']
                     date_param = datetime['value'].split('T')[0]
                     time_param = datetime['value'].split('T')[1].split('+')[0]
                     loading_string += ' il giorno ' + date_param + ' ora ' + time_param
