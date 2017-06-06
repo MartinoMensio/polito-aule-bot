@@ -1,6 +1,7 @@
 import requests
 import json
 from pprint import pprint
+from datetime import datetime
 
 
 class Client:
@@ -18,9 +19,15 @@ class Client:
         time_param = criteria.get('time')
         if date_param:
             payload['giorno'] = date_param
+        else:
+            # provide current day
+            payload['giorno'] = datetime.now().strftime('%d/%m/%Y')
 
         if time_param:
             payload['ora'] = time_param
+        else:
+            # provide current time
+            payload['ora'] = datetime.now().strftime('%H:%M:%S')
 
         response = requests.post(
             url, data={'data': json.dumps(payload)}).json()
