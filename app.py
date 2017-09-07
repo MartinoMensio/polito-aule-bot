@@ -122,4 +122,10 @@ def pass_update():
     return 'OK'
 
 # set the telegram webhook
-BOT.setWebhook(URL + SECRET)
+
+webhook_url = URL + SECRET
+
+# https://github.com/nickoala/telepot/issues/165#issuecomment-256056446
+if webhook_url != BOT.getWebhookInfo()['url']:
+    BOT.setWebhook(webhook_url)
+
