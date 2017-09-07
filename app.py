@@ -121,5 +121,5 @@ def pass_update():
     UPDATE_QUEUE.put(request.data)  # pass update to bot
     return 'OK'
 
-BOT.setWebhook() # unset if was set previously
+# set the telegram webhook
 BOT.setWebhook(URL + SECRET)
