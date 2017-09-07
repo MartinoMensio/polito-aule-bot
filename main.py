@@ -4,9 +4,27 @@ import time
 import telepot
 from telepot.loop import MessageLoop
 from pprint import pprint
+from flask import Flask, request
+from dotenv import load_dotenv, find_dotenv
 
 import wit_client
 import polito_client
+
+try:
+    from Queue import Queue
+except ImportError:
+    from queue import Queue
+
+# load environment from file if exists
+load_dotenv(find_dotenv())
+
+app = Flask(__name__)
+TOKEN = os.environ['TELEGRAM_TOKEN']  # put your token in heroku app as environment variable
+SECRET = '/bot' + TOKEN
+URL = os.environ['HEROKU_URL'] #  paste the url of your application
+
+UPDATE_QUEUE = Queue()
+BOT = telepot.Bot(TOKEN)
 
 examples = '_Quali aule libere ci sono ora?_\n_Domani alle 10 dove posso andare a studiare?_\n' + \
     '\nPuoi specificare un riferimento temporale e un riferimento spaziale:\n-temporale: abbastanza generico, dovrei capirti comunque\n-spaziale: puoi dirmi di mostrarti solo alcuni risultati in una certa area del poli (ad esempio "cittadella politecnica" o altri valori che puoi vedere in un risultato non filtrato)\n' + \
@@ -96,9 +114,12 @@ bot = telepot.Bot(os.environ['TELEGRAM_TOKEN'])
 ent_extractor = wit_client.Extractor(os.environ['WIT_TOKEN'])
 data_provider = polito_client.Client(os.environ['POLITO_TOKEN'])
 
-bot.message_loop(handle)
-print('Listening ...')
+BOT.message_loop({'chat': handle}, source=UPDATE_QUEUE)  # take updates from queue
 
-# Keep the program running.
-while 1:
-    time.sleep(10)
+@app.route(SECRET, methods=['GET', 'POST'])
+def pass_update():
+    UPDATE_QUEUE.put(request.data)  # pass update to bot
+    return 'OK'
+
+BOT.setWebhook() # unset if was set previously
+BOT.setWebhook(URL + SECRET)

@@ -1,2 +1,6 @@
 telepot
 requests
+arrow
+flask
+gunicorn
+python-dotenv
